@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIT FAQ Bot — February (Weeks 6–10)</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fraunces:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f0f4f8;
+  --white:#ffffff;
+  --dark:#0f1f2d;
+  --dark2:#162536;
+  --teal:#0d7a6b;
+  --teal2:#12a090;
+  --teal-lt:#e0f5f3;
+  --amber:#c2710c;
+  --amber2:#e08a20;
+  --text:#111827;
+  --muted:#6b7280;
+  --muted2:#9ca3af;
+  --border:#e2e8f0;
+  --shadow:0 2px 12px rgba(15,31,45,.08);
+  --shadow2:0 8px 28px rgba(15,31,45,.12);
+  --r:12px;
+}
+html,body{height:100%;background:var(--bg);font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);-webkit-font-smoothing:antialiased}
+
+.app{display:flex;height:100vh;max-width:1180px;margin:0 auto;padding:16px;gap:14px}
+
+/* ── Sidebar ── */
+.left{width:260px;flex-shrink:0;display:flex;flex-direction:column;gap:12px;overflow-y:auto}
+.left::-webkit-scrollbar{width:0}
+
+.brand{background:var(--dark);border-radius:var(--r);padding:20px 16px;color:#fff;position:relative;overflow:hidden;flex-shrink:0}
+.brand::before{content:'';position:absolute;top:-24px;right:-24px;width:90px;height:90px;background:var(--teal2);opacity:.12;border-radius:50%}
+.brand::after{content:'';position:absolute;bottom:-36px;left:-18px;width:110px;height:110px;background:var(--amber2);opacity:.08;border-radius:50%}
+.brand-icon{width:42px;height:42px;background:linear-gradient(135deg,var(--teal),var(--teal2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:10px;box-shadow:0 4px 12px rgba(13,122,107,.45);position:relative;z-index:1}
+.brand-name{font-family:'Fraunces',serif;font-size:.95rem;font-weight:600;line-height:1.35;position:relative;z-index:1}
+.brand-sub{font-size:.62rem;color:rgba(255,255,255,.4);margin-top:3px;letter-spacing:.07em;text-transform:uppercase;position:relative;z-index:1}
+.online-row{display:flex;align-items:center;gap:7px;margin-top:14px;padding-top:13px;border-top:1px solid rgba(255,255,255,.1);font-size:.67rem;color:rgba(255,255,255,.5);position:relative;z-index:1}
+.dot{width:7px;height:7px;border-radius:50%;background:#34d399;box-shadow:0 0 6px #34d399;animation:pulse 2.5s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+.month-badge{background:var(--white);border-radius:var(--r);box-shadow:var(--shadow);padding:14px 16px;flex-shrink:0}
+.mb-label{font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.mb-weeks{display:flex;flex-direction:column;gap:5px}
+.week-row{display:flex;align-items:flex-start;gap:9px;padding:7px 9px;border-radius:8px;background:var(--bg)}
+.wk-num{width:22px;height:22px;border-radius:6px;background:var(--dark);color:#fff;font-size:.64rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.wk-info .wk-title{font-size:.74rem;font-weight:600;color:var(--text)}
+.wk-info .wk-tag{font-size:.6rem;color:var(--muted);margin-top:1px}
+
+/* context strip */
+.ctx-strip{display:none;align-items:center;gap:8px;padding:7px 18px;background:#fffbeb;border-bottom:1px solid #fde68a;font-size:.7rem;color:#92400e;flex-shrink:0}
+.ctx-strip.show{display:flex}
+.ctx-topic{font-weight:700;color:#b45309}
+.ctx-clear{margin-left:auto;background:none;border:none;font-size:.66rem;color:#92400e;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;padding:2px 7px;border-radius:5px}
+.ctx-clear:hover{background:#fef3c7}
+
+/* analytics sidebar card */
+.analytics-card{background:var(--white);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;flex-shrink:0}
+.ac-header{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;cursor:pointer;user-select:none;border-bottom:1px solid var(--border)}
+.ac-title{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:6px}
+.chevron{font-size:.55rem;color:var(--muted2);transition:transform .2s}
+.chevron.open{transform:rotate(180deg)}
+.ac-body{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.ac-body.open{max-height:320px}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:10px}
+.stat-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 6px;text-align:center}
+.stat-val{font-family:'Fraunces',serif;font-size:1.4rem;font-weight:600;color:var(--dark)}
+.stat-lbl{font-size:.57rem;color:var(--muted2);letter-spacing:.05em;text-transform:uppercase;margin-top:2px}
+.intent-log{padding:0 10px 10px}
+.il-title{font-size:.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.i-row{display:flex;align-items:center;gap:7px;margin-bottom:5px;font-size:.68rem;color:var(--muted)}
+.i-name{width:72px;flex-shrink:0;color:var(--text)}
+.i-bar-bg{flex:1;background:var(--border);border-radius:4px;height:5px;overflow:hidden}
+.i-bar-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--teal2));border-radius:4px;transition:width .5s ease}
+.i-count{color:var(--muted2);font-size:.64rem}
+
+/* channel card */
+.channel-card{background:var(--white);border-radius:var(--r);box-shadow:var(--shadow);padding:12px 14px;flex-shrink:0}
+.card-title{font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:9px}
+.ch-btns{display:flex;flex-direction:column;gap:5px}
+.ch-btn{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--white);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:.75rem;color:var(--muted);transition:all .15s}
+.ch-btn:hover{border-color:var(--teal2);color:var(--teal);background:var(--teal-lt)}
+.ch-btn.active{border-color:var(--teal);color:var(--teal);background:var(--teal-lt);font-weight:600}
+.ch-ind{width:7px;height:7px;border-radius:50%;background:var(--border);flex-shrink:0}
+.ch-btn.active .ch-ind{background:var(--teal)}
+
+/* topics */
+.topics-card{background:var(--white);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;flex-shrink:0}
+.topic-list{padding:6px;display:flex;flex-direction:column;gap:2px}
+.t-btn{display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:8px;border:none;background:none;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:.78rem;color:var(--muted);text-align:left;transition:all .15s;width:100%}
+.t-btn:hover{background:var(--bg);color:var(--dark)}
+.t-icon{width:24px;height:24px;border-radius:6px;background:#e8f5f3;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.t-btn:hover .t-icon{background:#c7ede8}
+
+/* ── Main Chat ── */
+.chat-panel{flex:1;display:flex;flex-direction:column;background:var(--white);border-radius:14px;box-shadow:var(--shadow2);overflow:hidden;min-width:0}
+
+.chat-header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.ch-left{display:flex;align-items:center;gap:11px}
+.ch-avatar{width:38px;height:38px;background:linear-gradient(135deg,var(--dark),var(--teal));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.ch-title{font-size:.9rem;font-weight:700;color:var(--dark)}
+.ch-sub{font-size:.65rem;color:var(--muted);margin-top:1px}
+.badges{display:flex;gap:6px}
+.badge{font-size:.58rem;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.04em}
+.badge-green{background:#d1fae5;color:#065f46}
+.badge-feb{background:#ccfbf1;color:#0f766e}
+
+.week-strip{display:flex;gap:5px;padding:8px 18px;background:#f8fffe;border-bottom:1px solid var(--border);overflow-x:auto;flex-shrink:0}
+.week-strip::-webkit-scrollbar{display:none}
+.ws-chip{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);font-size:.62rem;font-weight:600;color:var(--muted);white-space:nowrap}
+.ws-chip.active{border-color:var(--teal);color:var(--teal);background:var(--teal-lt)}
+.ws-dot{width:6px;height:6px;border-radius:50%;background:var(--muted2);flex-shrink:0}
+.ws-chip.active .ws-dot{background:var(--teal)}
+
+.messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:14px;background:var(--bg);scroll-behavior:smooth}
+.messages::-webkit-scrollbar{width:4px}
+.messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
+
+.date-sep{text-align:center;font-size:.6rem;color:var(--muted2);letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:10px}
+.date-sep::before,.date-sep::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.msg-row{display:flex;gap:9px;animation:msgIn .2s ease}
+@keyframes msgIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.msg-row.user{flex-direction:row-reverse}
+.avatar{width:30px;height:30px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;margin-top:20px}
+.msg-row.bot .avatar{background:linear-gradient(135deg,var(--dark),var(--teal))}
+.msg-row.user .avatar{background:var(--border)}
+.msg-body{max-width:74%;display:flex;flex-direction:column;gap:3px}
+.msg-row.user .msg-body{align-items:flex-end}
+.msg-name{font-size:.6rem;font-weight:700;letter-spacing:.05em;color:var(--muted);text-transform:uppercase}
+.bubble{padding:11px 14px;border-radius:14px;font-size:.82rem;line-height:1.68;color:var(--text)}
+.msg-row.bot .bubble{background:var(--white);border:1px solid var(--border);border-top-left-radius:3px;box-shadow:0 1px 4px rgba(15,31,45,.05)}
+.msg-row.user .bubble{background:var(--dark);color:#fff;border-top-right-radius:3px;box-shadow:0 2px 8px rgba(15,31,45,.2)}
+.msg-time{font-size:.58rem;color:var(--muted2)}
+
+/* entity tags */
+.entity-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:7px}
+.entity-tag{display:inline-flex;align-items:center;gap:4px;font-size:.62rem;font-weight:600;padding:2px 8px;border-radius:20px;background:#e0f5f3;color:var(--teal);border:1px solid #a7e8e1}
+
+/* pipeline tag */
+.pipeline-tag{display:inline-flex;align-items:center;gap:4px;font-size:.58rem;font-weight:600;padding:2px 7px;border-radius:20px;background:#f0f9f8;color:var(--teal);border:1px solid #b2deda;margin-bottom:6px;letter-spacing:.03em}
+
+/* handover card */
+.handover-card{margin-top:9px;padding:11px 13px;background:#fffbeb;border:1px solid #fcd34d;border-radius:10px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .15s}
+.handover-card:hover{background:#fef3c7}
+.hc-icon{width:30px;height:30px;background:#fef3c7;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;border:1px solid #fcd34d}
+.hc-text{font-size:.72rem;color:#92400e}
+.hc-title{font-weight:700;font-size:.75rem;color:#78350f}
+.hc-arrow{margin-left:auto;color:#b45309;font-size:.75rem}
+
+/* typing */
+.typing-bubble{background:var(--white);border:1px solid var(--border);border-radius:14px;border-top-left-radius:3px;padding:13px 16px;display:flex;gap:4px;box-shadow:0 1px 4px rgba(15,31,45,.05)}
+.typing-bubble span{width:6px;height:6px;background:var(--muted2);border-radius:50%;animation:tb 1.3s infinite;display:block}
+.typing-bubble span:nth-child(2){animation-delay:.18s}
+.typing-bubble span:nth-child(3){animation-delay:.36s}
+@keyframes tb{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+
+/* input */
+.input-area{padding:14px 18px;background:var(--white);border-top:1px solid var(--border);flex-shrink:0}
+.input-wrap{display:flex;align-items:center;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:3px 3px 3px 14px;transition:border-color .2s,box-shadow .2s}
+.input-wrap:focus-within{border-color:var(--teal2);box-shadow:0 0 0 3px rgba(18,160,144,.1);background:#fff}
+#userInput{flex:1;border:none;background:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:.84rem;color:var(--text);outline:none;padding:10px 0}
+#userInput::placeholder{color:var(--muted2)}
+.send-btn{width:36px;height:36px;border-radius:8px;border:none;background:var(--dark);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .15s;flex-shrink:0}
+.send-btn:hover{background:var(--teal);transform:scale(1.05)}
+.send-btn:active{transform:scale(.97)}
+.input-footer{font-size:.59rem;color:var(--muted2);margin-top:8px;text-align:center;letter-spacing:.03em}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Sidebar -->
+  <aside class="left">
+    <div class="brand">
+      <div class="brand-icon">🧠</div>
+      <div class="brand-name">SIT Nagpur<br>Help Desk</div>
+      <div class="brand-sub">Symbiosis Institute of Technology</div>
+      <div class="online-row"><span class="dot"></span>Assistant Online</div>
+    </div>
+
+    <div class="month-badge">
+      <div class="mb-label">📅 February — Weeks 6 to 10</div>
+      <div class="mb-weeks">
+        <div class="week-row"><div class="wk-num">6</div><div class="wk-info"><div class="wk-title">Entity Extraction</div><div class="wk-tag">Dates, courses, semesters</div></div></div>
+        <div class="week-row"><div class="wk-num">7</div><div class="wk-info"><div class="wk-title">Context Handling</div><div class="wk-tag">Multi-turn conversation state</div></div></div>
+        <div class="week-row"><div class="wk-num">8</div><div class="wk-info"><div class="wk-title">Fallback & Handover</div><div class="wk-tag">Human escalation system</div></div></div>
+        <div class="week-row"><div class="wk-num">9</div><div class="wk-info"><div class="wk-title">Multichannel Mockup</div><div class="wk-tag">Web / WhatsApp / Console</div></div></div>
+        <div class="week-row"><div class="wk-num">10</div><div class="wk-info"><div class="wk-title">Analytics & Improvement</div><div class="wk-tag">Live session statistics</div></div></div>
+      </div>
+    </div>
+
+    <!-- Channel switcher -->
+    <div class="channel-card">
+      <div class="card-title">Deploy Channel</div>
+      <div class="ch-btns">
+        <button class="ch-btn active" onclick="switchChannel(this,'web')"><span class="ch-ind"></span>🌐 Web Portal</button>
+        <button class="ch-btn" onclick="switchChannel(this,'whatsapp')"><span class="ch-ind"></span>💬 WhatsApp</button>
+        <button class="ch-btn" onclick="switchChannel(this,'console')"><span class="ch-ind"></span>⌨️ Console / CLI</button>
+      </div>
+    </div>
+
+    <!-- Analytics -->
+    <div class="analytics-card">
+      <div class="ac-header" onclick="toggleAnalytics()">
+        <div class="ac-title"><span>📊</span>Session Analytics</div>
+        <span class="chevron" id="chevron">▼</span>
+      </div>
+      <div class="ac-body" id="acBody">
+        <div class="stat-grid">
+          <div class="stat-card"><div class="stat-val" id="statTotal">0</div><div class="stat-lbl">Queries</div></div>
+          <div class="stat-card"><div class="stat-val" id="statResolved">0</div><div class="stat-lbl">Resolved</div></div>
+          <div class="stat-card"><div class="stat-val" id="statFallback">0</div><div class="stat-lbl">Fallbacks</div></div>
+        </div>
+        <div class="intent-log">
+          <div class="il-title">Top Intents</div>
+          <div id="intentBars"><div style="font-size:.67rem;color:var(--muted2)">No queries yet</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Topics -->
+    <div class="topics-card">
+      <div class="card-title" style="padding:12px 14px 9px;border-bottom:1px solid var(--border)">Quick Topics</div>
+      <div class="topic-list">
+        <button class="t-btn" onclick="ask('Fee structure')"><span class="t-icon">💰</span>Fee Structure</button>
+        <button class="t-btn" onclick="ask('Exam schedule')"><span class="t-icon">📋</span>Exam Schedule</button>
+        <button class="t-btn" onclick="ask('Hostel facilities')"><span class="t-icon">🏠</span>Hostel</button>
+        <button class="t-btn" onclick="ask('Library timings')"><span class="t-icon">📚</span>Library</button>
+        <button class="t-btn" onclick="ask('Scholarship')"><span class="t-icon">🏆</span>Scholarship</button>
+        <button class="t-btn" onclick="ask('Placement')"><span class="t-icon">💼</span>Placements</button>
+        <button class="t-btn" onclick="ask('Contact admin')"><span class="t-icon">📞</span>Contact</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Chat -->
+  <main class="chat-panel">
+    <div class="chat-header">
+      <div class="ch-left">
+        <div class="ch-avatar" id="chatAvatar">🧠</div>
+        <div>
+          <div class="ch-title" id="chatTitle">SIT FAQ Bot — February</div>
+          <div class="ch-sub" id="chatSub">Weeks 6–10 · Entity · Context · Fallback · Multichannel · Analytics</div>
+        </div>
+      </div>
+      <div class="badges">
+        <span class="badge badge-green">● Online</span>
+        <span class="badge badge-feb" id="channelBadge">Web</span>
+      </div>
+    </div>
+
+    <!-- Week chips -->
+    <div class="week-strip">
+      <div class="ws-chip active"><span class="ws-dot"></span>Wk 6: Entity Extraction</div>
+      <div class="ws-chip active"><span class="ws-dot"></span>Wk 7: Context Handling</div>
+      <div class="ws-chip active"><span class="ws-dot"></span>Wk 8: Fallback/Handover</div>
+      <div class="ws-chip active"><span class="ws-dot"></span>Wk 9: Multichannel</div>
+      <div class="ws-chip active"><span class="ws-dot"></span>Wk 10: Analytics</div>
+    </div>
+
+    <!-- Context strip (Week 7) -->
+    <div class="ctx-strip" id="ctxStrip">
+      <span>🧵 Continuing topic:</span>
+      <span class="ctx-topic" id="ctxLabel">—</span>
+      <button class="ctx-clear" onclick="clearContext()">Clear ×</button>
+    </div>
+
+    <div class="messages" id="messages">
+      <div class="date-sep">February · Even Semester 2025–26</div>
+    </div>
+
+    <div class="input-area">
+      <div class="input-wrap">
+        <input type="text" id="userInput" placeholder="Ask about fees, exams, hostel, or try 'CS101 exam SEM 3'…" onkeydown="if(event.key==='Enter')send()" autocomplete="off"/>
+        <button class="send-btn" onclick="send()">➤</button>
+      </div>
+      <div class="input-footer">Hack-o-Week · February · Entity Extraction → Context Handling → Fallback/Handover → Multichannel Mockup → Analytics</div>
+    </div>
+  </main>
+</div>
+
+<script>
+// ══ Full FAQ Knowledge Base (same as January, carried forward) ══
+const faqs = [
+  { patterns:["fee","fees","tuition","payment","cost","charges","pay"], answer:"The annual tuition fee for B.Tech at SIT Nagpur is approximately ₹1,60,000–₹2,00,000 per year depending on the branch. Fees can be paid online via the student portal or at the accounts office. Scholarship deductions are applied before the due date." },
+  { patterns:["exam","exams","examination","test","schedule","timetable","date sheet"], answer:"End semester exams are typically held in November (odd semester) and April–May (even semester). The detailed timetable is published on the SIT portal 3–4 weeks before exams. Unit tests are conducted as per the academic calendar shared by departments." },
+  { patterns:["hostel","accommodation","room","dormitory","stay","pg"], answer:"SIT provides on-campus hostel facilities separately for boys and girls. Rooms are available on twin/triple sharing basis. Hostel allotment is done at the start of each academic year. Contact the hostel warden at hostel@sitpune.edu.in for availability." },
+  { patterns:["library","books","reading room","borrow","lib"], answer:"The SIT library is open Monday–Saturday, 8:00 AM to 8:00 PM. Students can borrow up to 3 books for 14 days. Access to e-resources like IEEE Xplore and Springer is available 24/7 via the student portal with your login credentials." },
+  { patterns:["admission","admissions","apply","application","eligibility","entrance","jee","mht-cet"], answer:"Admissions to B.Tech programs are through MHT-CET / JEE Main scores followed by CAP rounds conducted by the state. Direct admissions (management quota) are also available. Visit the official SIT admissions page or call the admissions helpline for current year cutoffs." },
+  { patterns:["contact","phone","email","address","admin","office","helpdesk"], answer:"SIT Nagpur campus contact:\n📞 +91-712-XXXXXXX\n📧 info.nagpur@sitpune.edu.in\n🏫 Survey No. 12, Ambazari Layout, Nagpur – 440010\nAdmin office hours: Mon–Fri, 9:30 AM – 5:30 PM." },
+  { patterns:["timing","timings","college timing","class time","working hours"], answer:"College working hours are Monday to Saturday, 8:30 AM to 5:30 PM. Regular classes run 8:30 AM – 4:30 PM. Saturday may have labs or extra sessions. Check the timetable shared by your class coordinator each semester." },
+  { patterns:["scholarship","scholarships","financial aid","merit","stipend"], answer:"SIT offers merit-based scholarships for students scoring above 75% in the previous semester. Government scholarships (EBC, OBC, SC/ST) are also processed through the institute. Submit scholarship forms to the accounts/welfare office within the first month of each semester." },
+  { patterns:["canteen","food","cafeteria","mess","lunch","eat"], answer:"The campus canteen serves breakfast, lunch, and snacks from 8:00 AM to 6:00 PM on working days. Monthly mess packages are available for hostelers. The canteen is located near the main building entrance." },
+  { patterns:["placement","placements","job","jobs","recruit","internship","company","hiring","campus"], answer:"SIT has an active Training & Placement cell. Top recruiters include TCS, Infosys, Wipro, Cognizant, and many more. On-campus drives are held from August to March. Register on the placement portal and maintain a CGPA above 6.5 to be eligible for most companies." },
+  { patterns:["wifi","internet","network","connection","broadband"], answer:"Campus Wi-Fi is available across academic buildings and hostels. Use your institute email ID and portal password to connect to the 'SIT-Student' network. For connectivity issues, contact the IT helpdesk at ithelp@sitpune.edu.in." },
+  { patterns:["holiday","holidays","vacation","break","leave","diwali","holi","christmas"], answer:"The academic calendar with all holidays is published at the start of each semester on the SIT student portal. Major holidays include Diwali, Republic Day, Independence Day, and semester breaks. Attendance rules still apply after holidays." },
+  { patterns:["attendance","absent","shortage","proxy","percentage"], answer:"Minimum 75% attendance is required in each subject to appear in end-semester exams. Attendance is recorded electronically. Shortage condonation may be granted in special cases with medical/official documentation submitted to the HOD." },
+  { patterns:["result","results","marks","grade","cgpa","sgpa","marksheet"], answer:"Results are declared on the SIT/Symbiosis University portal within 4–6 weeks after exams. Login to the student portal at www.sitpune.edu.in with your enrollment number to view your marksheet and SGPA/CGPA." },
+  { patterns:["hello","hi","hey","good morning","good afternoon","greetings","start"], answer:"Hello! 👋 Welcome to the SIT FAQ Bot. I can help with fees, exam schedules, hostel, library, placements, attendance, and more. What would you like to know?" },
+  { patterns:["thank","thanks","thank you","thx","ty"], answer:"You're welcome! Feel free to ask anything else. Good luck with your studies! 😊" },
+  { patterns:["bye","goodbye","exit","quit","see you"], answer:"Goodbye! 👋 The Help Desk is always here when you need it. Take care!" }
+];
+
+// ══ Jan NLP Base (Weeks 1-5 carried forward) ══
+const STOPWORDS=new Set(["a","an","the","is","are","was","were","be","been","have","has","had","do","does","did","will","would","shall","should","may","might","must","can","could","i","me","my","we","our","you","your","he","she","it","they","them","their","what","when","where","who","which","how","why","this","that","these","those","to","of","in","on","at","by","for","with","about","from","into","and","or","but","please","tell","give","know","want","need","get","find","show","let","its","info","information","details","regarding","related"]);
+const SPELL={"feees":"fees","fess":"fees","tution":"tuition","tutition":"tuition","exams":"exam","scedule":"schedule","timetabel":"timetable","hostell":"hostel","hostle":"hostel","admision":"admission","addmission":"admission","libraray":"library","libary":"library","attendence":"attendance","atendance":"attendance","placment":"placement","scolarship":"scholarship","resuts":"results","canteem":"canteen","holliday":"holiday","wfi":"wifi","intrnet":"internet","contect":"contact"};
+function preprocess(text){let t=text.toLowerCase().replace(/[^a-z0-9'\s]/g," ");let tokens=t.split(/\s+/).filter(Boolean);tokens=tokens.map(tok=>SPELL[tok]||tok);return tokens.filter(tok=>tok.length>1&&!STOPWORDS.has(tok));}
+const SYN={"fees":"fees","fee":"fees","tuition":"fees","charges":"fees","payment":"fees","cost":"fees","pay":"fees","money":"fees","rupees":"fees","rs":"fees","inr":"fees","exam":"exam","examination":"exam","test":"exam","quiz":"exam","schedule":"exam","timetable":"exam","paper":"exam","midsem":"exam","endsem":"exam","hostel":"hostel","accommodation":"hostel","room":"hostel","pg":"hostel","stay":"hostel","dorm":"hostel","library":"library","lib":"library","books":"library","borrow":"library","ieee":"library","admission":"admission","apply":"admission","application":"admission","jee":"admission","cet":"admission","cutoff":"admission","contact":"contact","phone":"contact","email":"contact","address":"contact","admin":"contact","office":"contact","timing":"timing","timings":"timing","time":"timing","hours":"timing","scholarship":"scholarship","financial":"scholarship","stipend":"scholarship","ebc":"scholarship","obc":"scholarship","canteen":"canteen","food":"canteen","mess":"canteen","lunch":"canteen","placement":"placement","job":"placement","jobs":"placement","internship":"placement","company":"placement","tcs":"placement","infosys":"placement","wipro":"placement","wifi":"wifi","internet":"wifi","network":"wifi","holiday":"holiday","vacation":"holiday","leave":"holiday","attendance":"attendance","absent":"attendance","shortage":"attendance","bunk":"attendance","result":"result","marks":"result","grade":"result","cgpa":"result","sgpa":"result","gpa":"result","pointer":"result"};
+function expandSynonyms(tokens){return tokens.map(tok=>SYN[tok]||tok);}
+function tfScore(qt,dk){let s=0;const ds=new Set(dk.map(k=>SYN[k]||k));for(const t of qt){const n=SYN[t]||t;if(ds.has(n)||dk.some(k=>k.includes(n)||n.includes(k)))s++;}return s;}
+function retrieveBestFaq(tokens){let best=0,bf=null;for(const faq of faqs){const s=tfScore(tokens,faq.patterns);if(s>best){best=s;bf=faq;}}return best>=1?bf:null;}
+const INTENTS={fees:["fees","tuition","payment","charges","cost","pay","rupees","rs","inr"],exam:["exam","examination","test","schedule","timetable","paper","midsem","endsem","quiz"],hostel:["hostel","accommodation","room","pg","stay","dorm"],scholarship:["scholarship","financial","aid","stipend","ebc","obc"],admission:["admission","apply","application","jee","cet","cutoff"],placement:["placement","job","jobs","internship","company","tcs","infosys","wipro"],attendance:["attendance","absent","shortage","proxy","bunk"],result:["result","marks","grade","cgpa","sgpa","gpa","pointer"],library:["library","lib","books","borrow","ieee"],canteen:["canteen","food","mess","lunch"],wifi:["wifi","internet","network","connection"],holiday:["holiday","vacation","leave","diwali","holi"],timing:["timing","timings","time","hours"],contact:["contact","phone","email","address","office","helpdesk"],greeting:["hello","hi","hey","morning","greetings"],farewell:["bye","goodbye","exit","quit"],thanks:["thank","thanks","thx","ty","appreciate"]};
+const I2F={fees:0,exam:1,hostel:2,library:3,admission:4,contact:5,timing:6,scholarship:7,canteen:8,placement:9,wifi:10,holiday:11,attendance:12,result:13,greeting:14,thanks:15,farewell:16};
+function classifyIntent(tokens){const sc={};for(const[intent,kw]of Object.entries(INTENTS)){sc[intent]=0;for(const tok of tokens){const n=SYN[tok]||tok;if(kw.includes(tok)||kw.includes(n))sc[intent]++;}}const sorted=Object.entries(sc).sort((a,b)=>b[1]-a[1]);return sorted[0][1]>0?sorted[0][0]:null;}
+
+// ══ Week 6: Entity Extraction ══
+const EP=[
+  {type:"DATE",  regex:/\b(\d{1,2}[\/\-]\d{1,2}(?:[\/\-]\d{2,4})?)\b/gi},
+  {type:"DATE",  regex:/\b(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s*\d{0,2}\b/gi},
+  {type:"SEM",   regex:/\b(sem(?:ester)?\s*\d|[1-8](?:st|nd|rd|th)\s*sem(?:ester)?)\b/gi},
+  {type:"COURSE",regex:/\b([A-Z]{2,3}\s*\d{3,4})\b/g},
+  {type:"YEAR",  regex:/\b(first|second|third|1st|2nd|3rd|fy|sy|ty)\s*year\b/gi},
+  {type:"YEAR",  regex:/\b(fy|sy|ty)\b/gi}
+];
+function extractEntities(text){const ents=[];for(const ep of EP){for(const m of [...text.matchAll(ep.regex)])ents.push({type:ep.type,value:m[0].trim()});}return ents;}
+
+// ══ Week 7: Context Handling ══
+let ctx={lastIntent:null};
+const FOLLOWUPS=["more","else","also","what about","how about","tell me more","anything else","details","explain","elaborate","further"];
+function isFollowUp(input){return FOLLOWUPS.some(w=>input.toLowerCase().includes(w));}
+function updateCtx(intent){if(!intent||["greeting","farewell","thanks"].includes(intent))return;ctx.lastIntent=intent;document.getElementById("ctxLabel").textContent=intent.charAt(0).toUpperCase()+intent.slice(1);document.getElementById("ctxStrip").classList.add("show");}
+function clearContext(){ctx.lastIntent=null;document.getElementById("ctxStrip").classList.remove("show");}
+
+// ══ Week 8: Fallback & Handover ══
+let fallbackStreak=0;
+const analytics={total:0,resolved:0,fallbacks:0,intentCounts:{}};
+function getFallback(input){
+  fallbackStreak++;analytics.fallbacks++;
+  let hint="Try: fees, exam, hostel, library, placement, scholarship, attendance, results, wifi, contact, timing.";
+  for(const k of["fees","exam","hostel","library","placement","scholarship","attendance","result","wifi","contact","timing","holiday","canteen"]){if(input.toLowerCase().includes(k)){hint=`For "${k}", try: "What is the ${k} at SIT?" or "Tell me about ${k}".`;break;}}
+  return{answer:`I couldn't find a specific answer for that. 🤔\n\n💡 ${hint}`,method:"fallback",handover:fallbackStreak>=2,entities:[]};
+}
+
+// ══ Week 9: Multichannel ══
+let currentChannel="web";
+const CH={
+  web:      {label:"SIT FAQ Bot — February",sub:"Weeks 6–10 · Entity · Context · Fallback · Multichannel · Analytics",badge:"Web",emoji:"🧠"},
+  whatsapp: {label:"SIT Bot (WhatsApp)",    sub:"WhatsApp channel · concise text-only responses",badge:"WhatsApp",emoji:"💬"},
+  console:  {label:"SIT_BOT >> CLI",        sub:"Console/CLI channel · plain text mode",badge:"Console",emoji:"⌨️"}
+};
+function switchChannel(btn,ch){
+  document.querySelectorAll(".ch-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active"); currentChannel=ch;
+  const c=CH[ch];
+  document.getElementById("chatTitle").textContent=c.label;
+  document.getElementById("chatSub").textContent=c.sub;
+  document.getElementById("channelBadge").textContent=c.badge;
+  document.getElementById("chatAvatar").textContent=c.emoji;
+  const note={web:"Switched to Web channel. Full rich interface active.",whatsapp:"Switched to WhatsApp channel. Responses will be concise and text-only.",console:"Switched to Console/CLI. Plain text mode enabled."};
+  botMsg(note[ch],[],false,"channel");
+}
+
+// ══ Week 10: Analytics ══
+function logAnalytics(intent,resolved){
+  analytics.total++;
+  if(resolved){analytics.resolved++;fallbackStreak=0;}
+  if(intent&&intent!=="unknown")analytics.intentCounts[intent]=(analytics.intentCounts[intent]||0)+1;
+  refreshAnalytics();
+}
+function refreshAnalytics(){
+  document.getElementById("statTotal").textContent=analytics.total;
+  document.getElementById("statResolved").textContent=analytics.resolved;
+  document.getElementById("statFallback").textContent=analytics.fallbacks;
+  const sorted=Object.entries(analytics.intentCounts).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const max=sorted[0]?.[1]||1;
+  const c=document.getElementById("intentBars");
+  c.innerHTML=sorted.length?sorted.map(([intent,count])=>`<div class="i-row"><span class="i-name">${intent}</span><div class="i-bar-bg"><div class="i-bar-fill" style="width:${Math.round(count/max*100)}%"></div></div><span class="i-count">${count}</span></div>`).join(""):'<div style="font-size:.67rem;color:var(--muted2)">No queries yet</div>';
+}
+function toggleAnalytics(){
+  const body=document.getElementById("acBody");
+  const chev=document.getElementById("chevron");
+  body.classList.toggle("open");chev.classList.toggle("open");
+  if(body.classList.contains("open"))refreshAnalytics();
+}
+
+// ══ Full Response Engine ══
+function getResponse(input){
+  const tokens=preprocess(input);
+  const expanded=expandSynonyms(tokens);
+  const intent=classifyIntent(expanded);
+
+  // Week 7: Follow-up context
+  if(isFollowUp(input)&&ctx.lastIntent){const idx=I2F[ctx.lastIntent];if(idx!==undefined){logAnalytics(ctx.lastIntent,true);return{answer:`Following up on ${ctx.lastIntent.toUpperCase()}: ${faqs[idx].answer}`,method:"context",entities:[]};}}
+
+  // Week 6: Entity extraction
+  const entities=extractEntities(input);
+
+  // Intent match
+  if(intent!==null&&I2F[intent]!==undefined){updateCtx(intent);logAnalytics(intent,true);return{answer:faqs[I2F[intent]].answer,method:"intent",entities};}
+
+  // TF-IDF
+  const faq=retrieveBestFaq(expanded);
+  if(faq){updateCtx(intent);logAnalytics("tfidf",true);return{answer:faq.answer,method:"tfidf",entities};}
+
+  // Pattern
+  const lower=input.toLowerCase();
+  for(const faq of faqs){for(const p of faq.patterns){if(lower.includes(p)){updateCtx(intent);logAnalytics("pattern",true);return{answer:faq.answer,method:"pattern",entities};}}}
+
+  // Week 8: Fallback
+  logAnalytics("unknown",false);
+  return getFallback(input);
+}
+
+// ══ UI ══
+const msgs=document.getElementById("messages");
+const inp=document.getElementById("userInput");
+const getTime=()=>new Date().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"});
+
+const METHOD_LABEL={intent:"Wk 5→Intent",tfidf:"Wk 4→TF-IDF",pattern:"Wk 1→Pattern",context:"Wk 7→Context",fallback:"Wk 8→Fallback",channel:"Wk 9→Channel"};
+
+function botMsg(text,entities=[],hasHandover=false,method="intent"){
+  const cfg=CH[currentChannel];
+  const row=document.createElement("div"); row.className="msg-row bot";
+  const av=document.createElement("div"); av.className="avatar"; av.textContent=cfg.emoji;
+  const body=document.createElement("div"); body.className="msg-body";
+  const name=document.createElement("div"); name.className="msg-name"; name.textContent=cfg.label+" · Feb";
+  const bubble=document.createElement("div"); bubble.className="bubble";
+
+  // Pipeline tag
+  const tag=document.createElement("div"); tag.className="pipeline-tag"; tag.textContent="⚙ "+(METHOD_LABEL[method]||"NLP"); bubble.appendChild(tag);
+
+  // Entity tags (Week 6)
+  if(entities.length>0){const er=document.createElement("div");er.className="entity-row";er.innerHTML=entities.map(e=>`<span class="entity-tag">📌 ${e.type}: ${e.value}</span>`).join("");bubble.appendChild(er);}
+
+  const txt=document.createElement("span"); txt.style.whiteSpace="pre-line"; txt.textContent=text; bubble.appendChild(txt);
+
+  // Handover card (Week 8)
+  if(hasHandover){
+    const card=document.createElement("div");card.className="handover-card";
+    card.innerHTML=`<div class="hc-icon">👨‍💼</div><div><div class="hc-title">Connect to Human Advisor</div><div class="hc-text">Escalate to admin desk for personal support</div></div><span class="hc-arrow">→</span>`;
+    card.onclick=()=>{card.innerHTML=`<div class="hc-icon">✅</div><div><div class="hc-title">Request Sent</div><div class="hc-text">admin@sitpune.edu.in — response within 24 hrs</div></div>`;card.style.cursor="default";};
+    bubble.appendChild(card);
+  }
+
+  const time=document.createElement("div"); time.className="msg-time"; time.textContent=getTime();
+  body.appendChild(name); body.appendChild(bubble); body.appendChild(time);
+  row.appendChild(av); row.appendChild(body);
+  msgs.appendChild(row); msgs.scrollTop=msgs.scrollHeight;
+}
+
+function userMsg(text){
+  const row=document.createElement("div"); row.className="msg-row user";
+  const av=document.createElement("div"); av.className="avatar"; av.textContent="👤";
+  const body=document.createElement("div"); body.className="msg-body";
+  const name=document.createElement("div"); name.className="msg-name"; name.textContent="You";
+  const bubble=document.createElement("div"); bubble.className="bubble"; bubble.textContent=text;
+  const time=document.createElement("div"); time.className="msg-time"; time.textContent=getTime();
+  body.appendChild(name); body.appendChild(bubble); body.appendChild(time);
+  row.appendChild(body); row.appendChild(av);
+  msgs.appendChild(row); msgs.scrollTop=msgs.scrollHeight;
+}
+
+function showTyping(){
+  const row=document.createElement("div"); row.className="msg-row bot"; row.id="typing";
+  const av=document.createElement("div"); av.className="avatar"; av.textContent=CH[currentChannel].emoji;
+  const body=document.createElement("div"); body.className="msg-body";
+  const tb=document.createElement("div"); tb.className="typing-bubble"; tb.innerHTML="<span></span><span></span><span></span>";
+  body.appendChild(tb); row.appendChild(av); row.appendChild(body);
+  msgs.appendChild(row); msgs.scrollTop=msgs.scrollHeight;
+}
+function removeTyping(){const t=document.getElementById("typing");if(t)t.remove();}
+
+function send(){
+  const text=inp.value.trim(); if(!text) return;
+  userMsg(text); inp.value=""; showTyping();
+  setTimeout(()=>{
+    removeTyping();
+    const r=getResponse(text);
+    botMsg(r.answer,r.entities||[],r.handover||false,r.method);
+  },650);
+}
+function ask(t){inp.value=t;send();}
+
+// Welcome
+botMsg("Welcome to the SIT FAQ Bot — February Edition! 🧠\n\nThis version covers Weeks 6–10 (builds on January's NLP):\n• Week 6: Entity extraction — detects dates, course codes, semesters\n• Week 7: Context handling — multi-turn conversation memory\n• Week 8: Fallback & human handover\n• Week 9: Multichannel mockup — switch Web / WhatsApp / Console\n• Week 10: Live session analytics (click 📊 in sidebar)\n\nTip: Try typing 'CS101 exam SEM 3' to see entity detection in action!",[],false,"pattern");
+</script>
+</body>
+</html>
